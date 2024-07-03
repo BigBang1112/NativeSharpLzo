@@ -37,10 +37,7 @@ namespace SharpLzo
         public static byte[] Decompress(byte[] src, int decompressedLength)
         {
             var result = TryDecompress(src, out var dst, decompressedLength);
-            if (result != LzoResult.OK)
-                throw new LzoException(result);
-
-            return dst;
+            return result == LzoResult.OK ? dst : throw new LzoException(result);
         }
 
         /// <summary>
@@ -73,12 +70,12 @@ namespace SharpLzo
             var result = TryDecompress(src, src.Length, dst, out var dstLength);
             if (result != LzoResult.OK)
             {
-                dst = default;
+                dst = [];
                 return result;
             }
 
             if (dstLength == 0)
-                dst = Array.Empty<byte>();
+                dst = [];
             else if (dstLength != dst.Length)
                 Array.Resize(ref dst, dstLength);
 

@@ -1,5 +1,3 @@
-using System;
-
 namespace SharpLzo
 {
     public static partial class Lzo
@@ -33,10 +31,7 @@ namespace SharpLzo
         public static byte[] Compress(CompressionMode mode, byte[] src)
         {
             var result = TryCompress(mode, src, out var outData);
-            if (result != LzoResult.OK)
-                throw new LzoException(result);
-
-            return outData;
+            return result == LzoResult.OK ? outData : throw new LzoException(result);
         }
 
         /// <summary>
@@ -68,7 +63,7 @@ namespace SharpLzo
             var result = TryCompress(mode, src, src.Length, tmpDst, out var dstLength, s_workMemory);
             if (result != LzoResult.OK)
             {
-                dst = default;
+                dst = [];
                 return result;
             }
 
