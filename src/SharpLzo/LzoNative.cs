@@ -1,40 +1,83 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace SharpLzo
 {
-    internal static class LzoNative
+    internal static partial class LzoNative
     {
         private const string Library = "liblzo2";
 
+#if NET8_0_OR_GREATER
+        [LibraryImport(Library)]
+        [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+        private static partial LzoResult __lzo_init_v2(
+            uint v, int s1, int s2, int s3, int s4, int s5, int s6, int s7, int s8, int s9
+        );
+#else
         [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
         private static extern LzoResult __lzo_init_v2(
             uint v, int s1, int s2, int s3, int s4, int s5, int s6, int s7, int s8, int s9
         );
+#endif
 
+#if NET8_0_OR_GREATER
+        [LibraryImport(Library)]
+        [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+        private static partial uint lzo_version();
+#else
         [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
         private static extern uint lzo_version();
+#endif
 
+#if NET8_0_OR_GREATER
+        [LibraryImport(Library)]
+        [UnmanagedCallConv(CallConvs = new Type[] { typeof(System.Runtime.CompilerServices.CallConvCdecl) })]
+        private static unsafe partial LzoResult lzo1x_1_compress(
+            byte* inData, UIntPtr inLength,
+            byte* outData, out UIntPtr outLength,
+            byte* wrkmem
+        );
+#else
         [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe LzoResult lzo1x_1_compress(
             byte* inData, UIntPtr inLength,
             byte* outData, out UIntPtr outLength,
             byte* wrkmem
         );
+#endif
 
+#if NET8_0_OR_GREATER
+        [LibraryImport(Library)]
+        [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+        private static unsafe partial LzoResult lzo1x_999_compress(
+            byte* inData, UIntPtr inLength,
+            byte* outData, out UIntPtr outLength,
+            byte* wrkmem
+        );
+#else
         [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe LzoResult lzo1x_999_compress(
             byte* inData, UIntPtr inLength,
             byte* outData, out UIntPtr outLength,
             byte* wrkmem
         );
+#endif
 
+#if NET8_0_OR_GREATER
+        [LibraryImport(Library)]
+        [UnmanagedCallConv(CallConvs = [typeof(System.Runtime.CompilerServices.CallConvCdecl)])]
+        private static unsafe partial LzoResult lzo1x_decompress_safe(
+            byte* inData, UIntPtr inLength,
+            byte* outData, ref UIntPtr outLength,
+            byte* wrkmem
+        );
+#else
         [DllImport(Library, CallingConvention = CallingConvention.Cdecl)]
         private static extern unsafe LzoResult lzo1x_decompress_safe(
             byte* inData, UIntPtr inLength,
             byte* outData, ref UIntPtr outLength,
             byte* wrkmem
         );
+#endif
 
         public static LzoResult Init()
         {
