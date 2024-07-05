@@ -78,7 +78,7 @@ jobs:
   build-and-publish:
     needs: compile-lzo
 
-    name: Build
+    name: Build and Publish
     runs-on: ubuntu-latest
     
     env:
