@@ -1,18 +1,136 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - "v*"
+  release:
+    types: [ published ]
+
+env:
+  LZO_VERSION: "2.10"
+
+permissions:
+  contents: write # important for release description edit and asset upload
+  packages: write
 
 jobs:
-  release:
+  prepare-description:
+    name: Set release description
     runs-on: ubuntu-latest
+    
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
     steps:
-      - uses: actions/checkout@v2
-      - name: Build and Pack
-        run: |
-          dotnet pack -c Release
-      - name: Push package
-        run: |
-          find src/SharpLzo/bin/Release -name '*.nupkg' | xargs -i dotnet nuget push {} -k ${{ secrets.NUGET_API_KEY }} -s https://www.myget.org/F/wtfblub/api/v2/package
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Set release information
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '***[Release is being automatically created, please wait...](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})***\n\n${{ github.event.release.body }}')"
+
+  compile-lzo:
+    name: Compile lzo (${{ matrix.compiler.rid }})
+    runs-on: ubuntu-latest
+    needs: prepare-description
+
+    strategy:
+      matrix:
+        compiler:
+          - {target: windows-static-x86, src: liblzo2.dll, dst: liblzo2.dll, rid: win-x86}
+          - {target: windows-static-x64, src: liblzo2.dll, dst: liblzo2.dll, rid: win-x64}
+          - {target: linux-x64, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-x64}
+          - {target: linux-armv6, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-arm}
+          - {target: linux-arm64, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-arm64}
+          - {target: web-wasm, src: liblzo2.a, dst: liblzo2.a, rid: browser-wasm}
+    
+    container:
+      image: dockcross/${{ matrix.compiler.target }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Cache lzo-${{ env.LZO_VERSION }}
+      id: cache-lzo
+      uses: actions/cache@v4
+      with:
+        path: runtimes
+        key: lzo-${{ env.LZO_VERSION }}-${{ matrix.compiler.rid }}
+
+    - name: Download and extract lzo-${{ env.LZO_VERSION }}
+      if: steps.cache-lzo.outputs.cache-hit != 'true'
+      run: | 
+        wget https://www.oberhumer.com/opensource/lzo/download/lzo-${{ env.LZO_VERSION }}.tar.gz
+        tar -xzvf lzo-${{ env.LZO_VERSION }}.tar.gz
+    
+    - name: Compile lzo-${{ env.LZO_VERSION }}
+      if: steps.cache-lzo.outputs.cache-hit != 'true'
+      run: |
+        cmake -B build/${{ matrix.compiler.target }} -S lzo-${{ env.LZO_VERSION }}/ -G Ninja -DENABLE_STATIC=0 -DENABLE_SHARED=1
+        ninja -C build/${{ matrix.compiler.target }} lzo_shared_lib
+        mkdir -p runtimes/${{ matrix.compiler.rid }}/native
+        cp build/${{ matrix.compiler.target }}/${{ matrix.compiler.src }} runtimes/${{ matrix.compiler.rid }}/native/${{ matrix.compiler.dst }}
+
+    - name: Upload lzo-${{ env.LZO_VERSION }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: lzo-${{ env.LZO_VERSION }}-${{ matrix.compiler.rid }}
+        path: runtimes
+  
+  build-and-publish:
+    needs: compile-lzo
+
+    name: Build
+    runs-on: ubuntu-latest
+    
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Download lzo-${{ env.LZO_VERSION }}
+      uses: actions/download-artifact@v4
+      with:
+        path: runtimes
+        merge-multiple: true
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          8.0.x
+          6.0.x
+          
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build -c Release --no-restore /p:ContinuousIntegrationBuild=true
+    
+    - name: Copy native lib to test project
+      run: cp -r runtimes/linux-x64/native/* test/SharpLzo.Tests/bin/Release/net8.0
+      
+    - name: Test
+      run: dotnet test -c Release --no-build --verbosity normal
+        
+    - name: Publish package to nuget.org
+      run: dotnet nuget push src/SharpLzo/bin/Release/*.nupkg -k ${{ secrets.NUGET_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Publish nupkg to github.com
+      run: dotnet nuget push src/SharpLzo/bin/Release/*.nupkg -k ${{ secrets.GITHUB_TOKEN }} -s https://nuget.pkg.github.com/bigbang1112/index.json --skip-duplicate
+    
+    - name: Upload nupkg to this release
+      run: gh release upload ${{ github.ref_name }} src/SharpLzo/bin/Release/*.nupkg
+
+  finalize-description:
+    needs: build-and-publish
+    
+    runs-on: ubuntu-latest
+    name: Finalize release description
+    
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set release information
+        run: gh release edit ${{ github.ref_name }} -n "$(echo -e '${{ github.event.release.body }}\n\nAssets were automatically generated using the [publish workflow](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}).')"
