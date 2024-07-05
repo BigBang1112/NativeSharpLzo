@@ -58,6 +58,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: lzo-${{ env.LZO_VERSION }}-${{ matrix.compiler.rid }}
+        path: runtimes
       
   build:
     runs-on: ubuntu-latest
@@ -69,6 +70,8 @@ jobs:
 
     - name: Download lzo-${{ env.LZO_VERSION }}
       uses: actions/download-artifact@v4
+      with:
+        path: runtimes
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
