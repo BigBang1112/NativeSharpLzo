@@ -86,6 +86,11 @@ jobs:
       
     - name: Build
       run: dotnet build -c Release --no-restore  /p:ContinuousIntegrationBuild=true
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
       
     - name: Test
       run: dotnet test -c Release --no-build --verbosity normal --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
