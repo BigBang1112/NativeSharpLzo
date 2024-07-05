@@ -35,5 +35,5 @@ jobs:
     - run: | 
         wget https://www.oberhumer.com/opensource/lzo/download/lzo-${{ env.LZO_VERSION }}.tar.gz
         tar -xzvf lzo-${{ env.LZO_VERSION }}.tar.gz
-        cmake -B build/$target -S src/lzo/ -G Ninja -DENABLE_STATIC=0 -DENABLE_SHARED=1
+        cmake -B build/$target -S lzo-${{ env.LZO_VERSION }}/ -G Ninja -DENABLE_STATIC=0 -DENABLE_SHARED=1
         ninja -C build/$target lzo_shared_lib
