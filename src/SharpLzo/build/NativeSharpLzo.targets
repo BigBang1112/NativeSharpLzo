@@ -1,0 +1,10 @@
+<Project>
+  <ItemGroup Condition=" '$(UsingMicrosoftNETSdkBlazorWebAssembly)' == 'true' ">
+    <None Visible="false" Include="$(MSBuildThisFileDirectory)../runtimes/browser-wasm/native/liblzo2.a">
+      <Pack>true</Pack>
+      <PackageCopyToOutput>true</PackageCopyToOutput>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <NativeFileReference Include="$(MSBuildThisFileDirectory)../runtimes/browser-wasm/native/liblzo2.a" />
+  </ItemGroup>
+</Project>

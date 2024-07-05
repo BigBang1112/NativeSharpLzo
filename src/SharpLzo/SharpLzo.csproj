@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>NativeSharpLzo</PackageId>
-    <Version>0.3.1</Version>
+    <Version>0.3.2</Version>
     <Authors>BigBang1112</Authors>
     <Description>Fork of SharpLzo with NativeAOT improvements and transparent native lzo C library build.</Description>
     <Copyright>Copyright (c) 2024 Petr Pivoňka</Copyright>
@@ -41,6 +41,6 @@
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\runtimes\**" Pack="True" PackagePath="runtimes\" />
-    <None Include="build\NativeSharpLzo.props" Pack="true" PackagePath="build\" />
+    <None Include="build\NativeSharpLzo.targets" Pack="true" PackagePath="build\" />
   </ItemGroup>
 </Project>
