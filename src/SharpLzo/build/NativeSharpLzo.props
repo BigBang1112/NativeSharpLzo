@@ -1,0 +1,5 @@
+<Project>
+  <ItemGroup Condition="'$(RuntimeIdentifier)' == 'browser-wasm'">
+    <NativeFileReference Include="$(MSBuildThisFileDirectory)runtimes\browser-wasm\native\liblzo2.a" />
+  </ItemGroup>
+</Project>
