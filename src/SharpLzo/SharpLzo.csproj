@@ -39,6 +39,6 @@
 
   <ItemGroup>
     <None Include="README.md" Pack="true" PackagePath="\" />
-    <None Include="runtimes\**" Pack="True" PackagePath="runtimes\" />
+    <None Include="..\..\runtimes\**" Pack="True" PackagePath="runtimes\" />
   </ItemGroup>
 </Project>
