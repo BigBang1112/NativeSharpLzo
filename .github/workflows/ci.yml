@@ -62,14 +62,13 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Retrieve lzo-${{ env.LZO_VERSION }} from cache
+    - name: Restore lzo-${{ env.LZO_VERSION }}
+      id: cache-lzo
       uses: actions/cache@v4
       with:
         path: runtimes
         key: lzo-${{ env.LZO_VERSION }}
-        restore-keys: |
-          lzo-${{ env.LZO_VERSION }}-
-
+        restore-keys: lzo-${{ env.LZO_VERSION }}-
 
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
