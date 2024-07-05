@@ -38,7 +38,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: runtimes
-        key: lzo-${{ env.LZO_VERSION }}-${{ matrix.compiler.rid }}
+        key: lzo-${{ env.LZO_VERSION }}-${{ matrix.compiler.rid }}-a
 
     - name: Download and extract lzo-${{ env.LZO_VERSION }}
       if: steps.cache-lzo.outputs.cache-hit != 'true'
@@ -53,13 +53,6 @@ jobs:
         ninja -C build/${{ matrix.compiler.target }} lzo_shared_lib
         mkdir -p runtimes/${{ matrix.compiler.rid }}/native
         cp build/${{ matrix.compiler.target }}/${{ matrix.compiler.src }} runtimes/${{ matrix.compiler.rid }}/native/${{ matrix.compiler.dst }}
-    
-    - name: Cache lzo-${{ env.LZO_VERSION }}
-      if: steps.cache-lzo.outputs.cache-hit != 'true'
-      uses: actions/cache@v4
-      with:
-        path: runtimes
-        key: lzo-${{ env.LZO_VERSION }}-${{ matrix.compiler.rid }}
 
   build:
     runs-on: ubuntu-latest
@@ -75,12 +68,12 @@ jobs:
         path: runtimes
         key: lzo-${{ env.LZO_VERSION }}
         restore-keys: |
-          lzo-${{ env.LZO_VERSION }}-win-x86
-          lzo-${{ env.LZO_VERSION }}-win-x64
-          lzo-${{ env.LZO_VERSION }}-linux-x64
-          lzo-${{ env.LZO_VERSION }}-linux-arm
-          lzo-${{ env.LZO_VERSION }}-linux-arm64
-          lzo-${{ env.LZO_VERSION }}-browser-wasm
+          lzo-${{ env.LZO_VERSION }}-win-x86-a
+          lzo-${{ env.LZO_VERSION }}-win-x64-a
+          lzo-${{ env.LZO_VERSION }}-linux-x64-a
+          lzo-${{ env.LZO_VERSION }}-linux-arm-a
+          lzo-${{ env.LZO_VERSION }}-linux-arm64-a
+          lzo-${{ env.LZO_VERSION }}-browser-wasm-a
 
 
     - name: Setup .NET
