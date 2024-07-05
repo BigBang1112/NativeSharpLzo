@@ -24,7 +24,7 @@ jobs:
           - {target: linux-x64, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-x64}
           - {target: linux-armv6, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-arm}
           - {target: linux-arm64, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-arm64}
-          - {target: web-wasm, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: browser-wasm}
+          - {target: web-wasm, src: liblzo2.a, dst: liblzo2.a, rid: browser-wasm}
     
     container:
       image: dockcross/${{ matrix.compiler.target }}
@@ -32,8 +32,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - run: | 
+    - name: Download and extract lzo-${{ env.LZO_VERSION }}
+      run: | 
         wget https://www.oberhumer.com/opensource/lzo/download/lzo-${{ env.LZO_VERSION }}.tar.gz
         tar -xzvf lzo-${{ env.LZO_VERSION }}.tar.gz
+    
+    - name: Compile lzo-${{ env.LZO_VERSION }}
+      run: |
         cmake -B build/$target -S lzo-${{ env.LZO_VERSION }}/ -G Ninja -DENABLE_STATIC=0 -DENABLE_SHARED=1
         ninja -C build/$target lzo_shared_lib
