@@ -39,5 +39,13 @@ jobs:
     
     - name: Compile lzo-${{ env.LZO_VERSION }}
       run: |
-        cmake -B build/$target -S lzo-${{ env.LZO_VERSION }}/ -G Ninja -DENABLE_STATIC=0 -DENABLE_SHARED=1
-        ninja -C build/$target lzo_shared_lib
+        cmake -B build/${{ matrix.compiler.target }} -S lzo-${{ env.LZO_VERSION }}/ -G Ninja -DENABLE_STATIC=0 -DENABLE_SHARED=1
+        ninja -C build/${{ matrix.compiler.target }} lzo_shared_lib
+        mkdir -p runtimes/${{ matrix.compiler.rid }}/native
+        cp build/${{ matrix.compiler.target }}/${{ matrix.compiler.src }} runtimes/${{ matrix.compiler.rid }}/native/${{ matrix.compiler.dst }}
+
+    - name: Upload lzo-${{ env.LZO_VERSION }} artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: lzo-${{ env.LZO_VERSION }}-${{ matrix.compiler.target }}
+        path: runtimes
