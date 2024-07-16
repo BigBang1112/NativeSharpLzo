@@ -1,5 +1,5 @@
 <Project>
-  <ItemGroup Condition=" '$(UsingMicrosoftNETSdkBlazorWebAssembly)' == 'true' ">
+  <ItemGroup Condition=" '$(UsingMicrosoftNETSdkBlazorWebAssembly)' == 'true' OR '$(UsingMicrosoftNETSdkRazor)' == 'true' ">
     <None Visible="false" Include="$(MSBuildThisFileDirectory)../runtimes/browser-wasm/native/liblzo2.a">
       <Pack>true</Pack>
       <PackageCopyToOutput>true</PackageCopyToOutput>
