@@ -4,7 +4,7 @@
     <Version>0.3.4</Version>
     <Authors>BigBang1112</Authors>
     <Description>Fork of SharpLzo with NativeAOT improvements and transparent native lzo C library build.</Description>
-    <Copyright>Copyright (c) 2024 Petr Pivoňka</Copyright>
+    <Copyright>Copyright (c) 2026 Petr Pivoňka</Copyright>
     <PackageProjectUrl>https://github.com/BigBang1112/NativeSharpLzo</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>lzo, sharplzo, nativesharplzo, fork, nativeaot, c</PackageTags>
@@ -30,8 +30,9 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
 
-    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <NoWarn>1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">

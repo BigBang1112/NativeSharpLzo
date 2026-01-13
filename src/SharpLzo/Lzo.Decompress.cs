@@ -86,7 +86,7 @@ namespace SharpLzo
         /// Tries to decompress the data.
         /// </summary>
         /// <param name="src">The data to decompress.</param>
-        /// <param name="srcLength">The length of <see cref="src"/>.</param>
+        /// <param name="srcLength">The length of <paramref name="src"/>.</param>
         /// <param name="dst">The array where the decompressed data gets stored.</param>
         /// <param name="dstLength">The length of the decompressed data.</param>
         /// <returns>Returns the result indicating wether the decompression was successful.</returns>

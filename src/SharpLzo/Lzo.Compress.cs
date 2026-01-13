@@ -92,7 +92,7 @@ namespace SharpLzo
         /// </summary>
         /// <param name="mode">The compression mode.</param>
         /// <param name="src">The data to compress.</param>
-        /// <param name="srcLength">The length of <see cref="src"/>.</param>
+        /// <param name="srcLength">The length of <paramref name="src"/>.</param>
         /// <param name="dst">The array where the compressed data gets stored.
         ///  Make sure the array is big enough. The official lzo example suggests <code>srcLength + srcLength / 16 + 64 + 3</code>.
         /// </param>
@@ -124,16 +124,16 @@ namespace SharpLzo
         /// </summary>
         /// <param name="mode">The compression mode.</param>
         /// <param name="src">The data to compress.</param>
-        /// <param name="srcLength">The length of <see cref="src"/>.</param>
+        /// <param name="srcLength">The length of <paramref name="src"/>.</param>
         /// <param name="dst">The array where the compressed data gets stored.
         ///  Make sure the array is big enough. The official lzo example suggests <code>srcLength + srcLength / 16 + 64 + 3</code>.
         /// </param>
         /// <param name="dstLength">The length of the compressed data.</param>
         /// <param name="workMemory">The internal work memory for lzo.
-        ///  The array should be at least the size of <see cref="Lzo.WorkMemorySize"/>.
+        ///  The array should be at least the size of <see cref="WorkMemorySize"/>.
         /// </param>
         /// <returns>Returns the result indicating wether the compression was successful.</returns>
-        /// <remarks>This method can be used from multiple threads <b>as long as each concurrent operation has its own</b> <see cref="workMemory"/>.</remarks>
+        /// <remarks>This method can be used from multiple threads <b>as long as each concurrent operation has its own</b> <paramref name="workMemory"/>.</remarks>
         public static LzoResult TryCompress(
             CompressionMode mode,
             ReadOnlySpan<byte> src,
