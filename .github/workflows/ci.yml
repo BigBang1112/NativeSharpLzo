@@ -25,7 +25,7 @@ jobs:
           - {target: linux-x64, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-x64}
           - {target: linux-armv6, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-arm}
           - {target: linux-arm64, src: liblzo2.so.2.0.0, dst: liblzo2.so, rid: linux-arm64}
-          - {target: web-wasm, src: liblzo2.a, dst: liblzo2.a, rid: browser-wasm}
+          - {target: "web-wasm:20240418-88c04a4", src: liblzo2.a, dst: liblzo2.a, rid: browser-wasm} # supposedly Emscripten 3.1.56 seen in wasm-tools
     
     container:
       image: dockcross/${{ matrix.compiler.target }}

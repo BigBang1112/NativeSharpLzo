@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>NativeSharpLzo</PackageId>
-    <Version>0.3.4</Version>
+    <Version>0.3.5</Version>
     <Authors>BigBang1112</Authors>
     <Description>Fork of SharpLzo with NativeAOT improvements and transparent native lzo C library build.</Description>
     <Copyright>Copyright (c) 2026 Petr Pivoňka</Copyright>
