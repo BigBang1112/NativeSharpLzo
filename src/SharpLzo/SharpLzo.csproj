@@ -42,7 +42,7 @@
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
     <None Include="..\..\runtimes\**" Pack="True" PackagePath="runtimes\" />
-    <None Include="buildTransitive\NativeSharpLzo.targets" Pack="true" PackagePath="buildTransitive\" />
-    <None Include="buildTransitive\NativeSharpLzo.targets" Pack="true" PackagePath="build\" />
+    <None Include="buildTransitive\NativeSharpLzo.targets" Pack="true" PackagePath="buildTransitive\NativeSharpLzo.targets" />
+    <None Include="buildTransitive\NativeSharpLzo.targets" Pack="true" PackagePath="build\NativeSharpLzo.targets" />
   </ItemGroup>
 </Project>
