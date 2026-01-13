@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="src/SharpLzo/SharpLzo.csproj" />
+  <Project Path="src/SimpleExample/SimpleExample/SimpleExample.csproj" />
+  <Project Path="test/SharpLzo.Tests/SharpLzo.Tests.csproj" />
+</Solution>
