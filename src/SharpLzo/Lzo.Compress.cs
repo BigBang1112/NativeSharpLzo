@@ -1,3 +1,5 @@
+using System.Buffers;
+
 namespace SharpLzo
 {
     public static partial class Lzo
@@ -11,7 +13,7 @@ namespace SharpLzo
         /// otherwise throws a <see cref="LzoException"/> with the corresponding error code.
         /// </returns>
         /// <exception cref="LzoException">Indicates that the compression failed.</exception>
-        /// <remarks>This method <b>is not</b> thread-safe.</remarks>
+        /// <remarks>This method is thread-safe.</remarks>
         public static byte[] Compress(byte[] src)
         {
             return Compress(CompressionMode.Lzo1x_1, src);
@@ -27,7 +29,7 @@ namespace SharpLzo
         /// otherwise throws a <see cref="LzoException"/> with the corresponding error code.
         /// </returns>
         /// <exception cref="LzoException">Indicates that the compression failed.</exception>
-        /// <remarks>This method <b>is not</b> thread-safe.</remarks>
+        /// <remarks>This method is thread-safe.</remarks>
         public static byte[] Compress(CompressionMode mode, byte[] src)
         {
             var result = TryCompress(mode, src, out var outData);
@@ -40,7 +42,7 @@ namespace SharpLzo
         /// <param name="src">The data to compress.</param>
         /// <param name="dst">A newly created array with the compressed data.</param>
         /// <returns>Returns the result indicating wether the compression was successful or not.</returns>
-        /// <remarks>This method <b>is not</b> thread-safe.</remarks>
+        /// <remarks>This method is thread-safe.</remarks>
         public static LzoResult TryCompress(byte[] src, out byte[] dst)
         {
             return TryCompress(CompressionMode.Lzo1x_1, src, out dst);
@@ -53,14 +55,27 @@ namespace SharpLzo
         /// <param name="src">The data to compress.</param>
         /// <param name="dst">A newly created array with the compressed data.</param>
         /// <returns>Returns the result indicating wether the compression was successful or not.</returns>
-        /// <remarks>This method <b>is not</b> thread-safe.</remarks>
+        /// <remarks>This method is thread-safe.</remarks>
         public static LzoResult TryCompress(CompressionMode mode, byte[] src, out byte[] dst)
         {
             // See LZO examples: http://www.oberhumer.com/opensource/lzo/
             var tmpDstLength = src.Length + src.Length / 16 + 64 + 3;
             var tmpDst = new byte[tmpDstLength];
 
-            var result = TryCompress(mode, src, src.Length, tmpDst, out var dstLength, s_workMemory);
+            var workMemory = ArrayPool<byte>.Shared.Rent(WorkMemorySize);
+
+            LzoResult result;
+            int dstLength;
+
+            try
+            {
+                result = TryCompress(mode, src, src.Length, tmpDst, out dstLength, workMemory);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(workMemory);
+            }
+
             if (result != LzoResult.OK)
             {
                 dst = [];
@@ -83,7 +98,7 @@ namespace SharpLzo
         /// </param>
         /// <param name="dstLength">The length of the compressed data.</param>
         /// <returns>Returns the result indicating wether the compression was successful.</returns>
-        /// <remarks>This method <b>is not</b> thread-safe. Use <see cref="TryCompress(CompressionMode,ReadOnlySpan&lt;byte&gt;,int,Span&lt;byte&gt;, out int, byte[])"/> for multithreading.</remarks>
+        /// <remarks>This method is thread-safe.</remarks>
         public static LzoResult TryCompress(
             CompressionMode mode,
             ReadOnlySpan<byte> src,
@@ -92,7 +107,16 @@ namespace SharpLzo
             out int dstLength
         )
         {
-            return TryCompress(mode, src, src.Length, dst, out dstLength, s_workMemory);
+            var workMemory = ArrayPool<byte>.Shared.Rent(WorkMemorySize);
+
+            try
+            {
+                return TryCompress(mode, src, src.Length, dst, out dstLength, workMemory);
+            }
+            finally
+            {
+                ArrayPool<byte>.Shared.Return(workMemory);
+            }
         }
 
         /// <summary>

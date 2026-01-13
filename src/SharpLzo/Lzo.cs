@@ -4,8 +4,6 @@
     {
         public const int WorkMemorySize = 14 * 16384 * sizeof(short);
 
-        private static readonly byte[] s_workMemory = new byte[WorkMemorySize];
-
         public static uint Version => LzoNative.Version();
 
         static Lzo()
