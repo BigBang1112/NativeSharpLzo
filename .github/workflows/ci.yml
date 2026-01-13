@@ -89,7 +89,10 @@ jobs:
       run: dotnet build -c Release --no-restore -p:ContinuousIntegrationBuild=true
 
     - name: Copy native lib to test project
-      run: cp -r runtimes/linux-x64/native/* test/SharpLzo.Tests/bin/Release/net10.0
+      run: |
+        for version in 10.0 9.0 8.0; do
+          cp -r runtimes/linux-x64/native/* "test/SharpLzo.Tests/bin/Release/net${version}"
+        done
       
     - name: Test
       run: dotnet test -c Release --no-build --verbosity normal --no-build --collect:"XPlat Code Coverage" --results-directory ./coverage
